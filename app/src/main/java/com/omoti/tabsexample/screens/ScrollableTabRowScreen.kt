@@ -31,8 +31,8 @@ import com.omoti.tabsexample.ui.theme.TabsExampleTheme
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScrollableTabRowScreen(onBack: () -> Unit) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+fun ScrollableTabRowScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
+    var selectedTabIndex by remember { mutableStateOf(initialTabIndex) }
     val titles = listOf("Tab 1", "Tab 2", "Tab 3", "Tab 4", "Tab 5", "Don’t truncate")
 
     Scaffold(
