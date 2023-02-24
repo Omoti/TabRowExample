@@ -27,6 +27,7 @@ import com.omoti.tabsexample.ui.theme.TabsExampleTheme
 fun MainScreen(
     onFixedClick: (Int) -> Unit,
     onScrollableClick: (Int) -> Unit,
+    onCollapseClick: (Int) -> Unit,
 ) {
     var input by remember { mutableStateOf("0") }
     val initialTabIndex: Int = input.toIntOrNull() ?: 0
@@ -42,6 +43,10 @@ fun MainScreen(
 
         Button(onClick = { onScrollableClick(initialTabIndex) }) {
             Text(text = "Scrollable Tabs")
+        }
+
+        Button(onClick = { onCollapseClick(initialTabIndex) }) {
+            Text(text = "Collapse Tabs")
         }
 
         Row(
@@ -63,6 +68,6 @@ fun MainScreen(
 @Composable
 fun MainScreenPreview() {
     TabsExampleTheme {
-        MainScreen(onFixedClick = {}, onScrollableClick = {})
+        MainScreen(onFixedClick = {}, onScrollableClick = {}, onCollapseClick = {})
     }
 }
