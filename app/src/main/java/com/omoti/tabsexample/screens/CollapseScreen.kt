@@ -15,12 +15,15 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import com.omoti.tabsexample.ui.theme.TabsExampleTheme
 
@@ -33,6 +36,9 @@ fun CollapseScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
     var selectedTabIndex by remember { mutableStateOf(initialTabIndex) }
     val titles = listOf("Tab 1", "Tab 2", "Tab 3")
 
+    val topAppBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -42,8 +48,10 @@ fun CollapseScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
                         Icon(Icons.Default.ArrowBack, contentDescription = null)
                     }
                 },
+                scrollBehavior = scrollBehavior,
             )
         },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { paddingValues ->
         Column(
             modifier = Modifier
