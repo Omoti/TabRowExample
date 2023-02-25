@@ -28,6 +28,7 @@ fun MainScreen(
     onFixedClick: (Int) -> Unit,
     onScrollableClick: (Int) -> Unit,
     onCollapseClick: (Int) -> Unit,
+    onCustomClick: (Int) -> Unit,
 ) {
     var input by remember { mutableStateOf("0") }
     val initialTabIndex: Int = input.toIntOrNull() ?: 0
@@ -49,6 +50,10 @@ fun MainScreen(
             Text(text = "Collapse Tabs")
         }
 
+        Button(onClick = { onCustomClick(initialTabIndex) }) {
+            Text(text = "Custom Tabs")
+        }
+
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -68,6 +73,11 @@ fun MainScreen(
 @Composable
 fun MainScreenPreview() {
     TabsExampleTheme {
-        MainScreen(onFixedClick = {}, onScrollableClick = {}, onCollapseClick = {})
+        MainScreen(
+            onFixedClick = {},
+            onScrollableClick = {},
+            onCollapseClick = {},
+            onCustomClick = {},
+        )
     }
 }

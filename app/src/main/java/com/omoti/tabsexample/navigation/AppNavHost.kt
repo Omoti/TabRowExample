@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.omoti.tabsexample.screens.CollapseScreen
+import com.omoti.tabsexample.screens.CustomTabRowScreen
 import com.omoti.tabsexample.screens.FixedTabRowScreen
 import com.omoti.tabsexample.screens.MainScreen
 import com.omoti.tabsexample.screens.ScrollableTabRowScreen
@@ -24,6 +25,9 @@ fun AppNavHost(navController: NavHostController) {
                 },
                 onCollapseClick = { initialTabIndex ->
                     navController.navigate(route = "collapse/${initialTabIndex}")
+                },
+                onCustomClick = { initialTabIndex ->
+                    navController.navigate(route = "custom/${initialTabIndex}")
                 },
             )
         }
@@ -50,6 +54,15 @@ fun AppNavHost(navController: NavHostController) {
             arguments = listOf(navArgument("initialTabIndex") { type = NavType.IntType }),
         ) { backStackEntry ->
             CollapseScreen(
+                onBack = { navController.popBackStack() },
+                initialTabIndex = backStackEntry.arguments?.getInt("initialTabIndex") ?: 0,
+            )
+        }
+        composable(
+            route = "custom/{initialTabIndex}",
+            arguments = listOf(navArgument("initialTabIndex") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            CustomTabRowScreen(
                 onBack = { navController.popBackStack() },
                 initialTabIndex = backStackEntry.arguments?.getInt("initialTabIndex") ?: 0,
             )
