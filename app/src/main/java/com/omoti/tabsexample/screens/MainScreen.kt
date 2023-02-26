@@ -28,6 +28,7 @@ fun MainScreen(
     onFixedClick: (Int) -> Unit,
     onScrollableClick: (Int) -> Unit,
     onCollapseClick: (Int) -> Unit,
+    onStickyClick: (Int) -> Unit,
     onCustomClick: (Int) -> Unit,
 ) {
     var input by remember { mutableStateOf("0") }
@@ -48,6 +49,10 @@ fun MainScreen(
 
         Button(onClick = { onCollapseClick(initialTabIndex) }) {
             Text(text = "Collapse Tabs")
+        }
+
+        Button(onClick = { onStickyClick(initialTabIndex) }) {
+            Text(text = "Sticky Tabs")
         }
 
         Button(onClick = { onCustomClick(initialTabIndex) }) {
@@ -77,6 +82,7 @@ fun MainScreenPreview() {
             onFixedClick = {},
             onScrollableClick = {},
             onCollapseClick = {},
+            onStickyClick = {},
             onCustomClick = {},
         )
     }

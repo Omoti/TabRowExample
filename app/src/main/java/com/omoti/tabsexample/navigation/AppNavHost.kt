@@ -11,6 +11,7 @@ import com.omoti.tabsexample.screens.CustomTabRowScreen
 import com.omoti.tabsexample.screens.FixedTabRowScreen
 import com.omoti.tabsexample.screens.MainScreen
 import com.omoti.tabsexample.screens.ScrollableTabRowScreen
+import com.omoti.tabsexample.screens.StickyScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -25,6 +26,9 @@ fun AppNavHost(navController: NavHostController) {
                 },
                 onCollapseClick = { initialTabIndex ->
                     navController.navigate(route = "collapse/${initialTabIndex}")
+                },
+                onStickyClick = { initialTabIndex ->
+                    navController.navigate(route = "sticky/${initialTabIndex}")
                 },
                 onCustomClick = { initialTabIndex ->
                     navController.navigate(route = "custom/${initialTabIndex}")
@@ -54,6 +58,15 @@ fun AppNavHost(navController: NavHostController) {
             arguments = listOf(navArgument("initialTabIndex") { type = NavType.IntType }),
         ) { backStackEntry ->
             CollapseScreen(
+                onBack = { navController.popBackStack() },
+                initialTabIndex = backStackEntry.arguments?.getInt("initialTabIndex") ?: 0,
+            )
+        }
+        composable(
+            route = "sticky/{initialTabIndex}",
+            arguments = listOf(navArgument("initialTabIndex") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            StickyScreen(
                 onBack = { navController.popBackStack() },
                 initialTabIndex = backStackEntry.arguments?.getInt("initialTabIndex") ?: 0,
             )
