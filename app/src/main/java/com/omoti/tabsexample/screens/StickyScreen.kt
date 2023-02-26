@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
@@ -24,6 +25,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +45,8 @@ import com.omoti.tabsexample.ui.theme.TabsExampleTheme
 fun StickyScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
     var selectedTabIndex by remember { mutableStateOf(initialTabIndex) }
     val titles = listOf("Tab 1", "Tab 2", "Tab 3")
+    val lazyListState = rememberLazyListState()
+    val showIcons by remember { derivedStateOf { lazyListState.firstVisibleItemIndex == 0 } }
 
     Scaffold(
         topBar = {
@@ -61,7 +65,10 @@ fun StickyScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                state = lazyListState,
+                modifier = Modifier.fillMaxSize(),
+            ) {
                 item {
                     Box(
                         contentAlignment = Alignment.Center,
@@ -79,16 +86,17 @@ fun StickyScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
                             Tab(
                                 selected = selectedTabIndex == index,
                                 onClick = { selectedTabIndex = index },
-                                icon = {
-                                    Icon(
-                                        imageVector = when (index) {
-                                            0 -> Icons.Default.Phone
-                                            1 -> Icons.Default.Email
-                                            else -> Icons.Default.Person
-                                        },
-                                        contentDescription = null
-                                    )
-                                },
+                                icon = if (showIcons) {
+                                    {
+                                        Icon(
+                                            imageVector = when (index) {
+                                                0 -> Icons.Default.Phone
+                                                1 -> Icons.Default.Email
+                                                else -> Icons.Default.Person
+                                            }, contentDescription = null
+                                        )
+                                    }
+                                } else null,
                                 text = { Text(text = title, maxLines = 1) },
                             )
                         }
