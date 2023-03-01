@@ -12,6 +12,7 @@ import com.omoti.tabsexample.screens.FixedTabRowScreen
 import com.omoti.tabsexample.screens.MainScreen
 import com.omoti.tabsexample.screens.ScrollableTabRowScreen
 import com.omoti.tabsexample.screens.StickyScreen
+import com.omoti.tabsexample.screens.TabRowWithPagerScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -32,6 +33,9 @@ fun AppNavHost(navController: NavHostController) {
                 },
                 onCustomClick = { initialTabIndex ->
                     navController.navigate(route = "custom/${initialTabIndex}")
+                },
+                onPagerClick = { initialTabIndex ->
+                    navController.navigate(route = "pager/${initialTabIndex}")
                 },
             )
         }
@@ -76,6 +80,15 @@ fun AppNavHost(navController: NavHostController) {
             arguments = listOf(navArgument("initialTabIndex") { type = NavType.IntType }),
         ) { backStackEntry ->
             CustomTabRowScreen(
+                onBack = { navController.popBackStack() },
+                initialTabIndex = backStackEntry.arguments?.getInt("initialTabIndex") ?: 0,
+            )
+        }
+        composable(
+            route = "pager/{initialTabIndex}",
+            arguments = listOf(navArgument("initialTabIndex") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            TabRowWithPagerScreen(
                 onBack = { navController.popBackStack() },
                 initialTabIndex = backStackEntry.arguments?.getInt("initialTabIndex") ?: 0,
             )

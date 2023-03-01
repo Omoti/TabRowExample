@@ -30,6 +30,7 @@ fun MainScreen(
     onCollapseClick: (Int) -> Unit,
     onStickyClick: (Int) -> Unit,
     onCustomClick: (Int) -> Unit,
+    onPagerClick: (Int) -> Unit,
 ) {
     var input by remember { mutableStateOf("0") }
     val initialTabIndex: Int = input.toIntOrNull() ?: 0
@@ -59,6 +60,10 @@ fun MainScreen(
             Text(text = "Custom Tabs")
         }
 
+        Button(onClick = { onPagerClick(initialTabIndex) }) {
+            Text(text = "Fixed Tabs with Pager")
+        }
+
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -84,6 +89,7 @@ fun MainScreenPreview() {
             onCollapseClick = {},
             onStickyClick = {},
             onCustomClick = {},
+            onPagerClick = {},
         )
     }
 }
