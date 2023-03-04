@@ -1,9 +1,11 @@
 package com.omoti.tabsexample.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -23,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.omoti.tabsexample.ui.theme.TabsExampleTheme
 import kotlinx.coroutines.launch
 
@@ -69,6 +72,7 @@ fun TabRowWithPagerScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
             HorizontalPager(
                 state = pagerState,
                 pageCount = titles.size,
+                modifier = Modifier.weight(1f),
             ) { page ->
                 Box(
                     contentAlignment = Alignment.Center,
@@ -79,6 +83,20 @@ fun TabRowWithPagerScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
+            }
+
+            // Page status
+            // https://developer.android.com/reference/kotlin/androidx/compose/foundation/pager/PagerState#currentPage()
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            ) {
+                Text(text = "Current Page: ${pagerState.currentPage}")
+                Text(text = "Target Page: ${pagerState.targetPage}")
+                Text(text = "Settled Page Offset: ${pagerState.settledPage}")
             }
         }
     }
