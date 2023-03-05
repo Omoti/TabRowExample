@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,7 +39,7 @@ import com.omoti.tabsexample.ui.theme.TabsExampleTheme
 @Composable
 fun FixedTabRowScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
     var selectedTabIndex by remember { mutableStateOf(initialTabIndex) }
-    val titles = listOf("Tab 1", "Tab 2", "Don’t truncate")
+    val titles = listOf("Tab 1", "Tab 2", "Tab 3")
 
     Scaffold(
         topBar = {
@@ -65,6 +68,15 @@ fun FixedTabRowScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
+                        icon = {
+                            Icon(
+                                imageVector = when (index) {
+                                    0 -> Icons.Default.Phone
+                                    1 -> Icons.Default.Email
+                                    else -> Icons.Default.Person
+                                }, contentDescription = null
+                            )
+                        },
                         text = { Text(text = title, maxLines = 1) },
                         selectedContentColor = Color.Red,
                         unselectedContentColor = Color.Gray,
