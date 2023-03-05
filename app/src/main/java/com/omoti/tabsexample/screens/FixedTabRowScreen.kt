@@ -13,6 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.omoti.tabsexample.ui.theme.TabsExampleTheme
 
@@ -52,12 +55,19 @@ fun FixedTabRowScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
                 .fillMaxSize()
                 .padding(paddingValues),
         ) {
-            TabRow(selectedTabIndex = selectedTabIndex) {
+            TabRow(selectedTabIndex = selectedTabIndex, indicator = { tabPositions ->
+                TabRowDefaults.Indicator(
+                    color = Color.Red,
+                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                )
+            }) {
                 titles.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
                         text = { Text(text = title, maxLines = 1) },
+                        selectedContentColor = Color.Red,
+                        unselectedContentColor = Color.Gray,
                     )
                 }
             }
