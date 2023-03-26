@@ -5,10 +5,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -69,16 +73,35 @@ fun CustomTabRowScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
-                        text = {
+                        icon = {
                             BadgedBox(
                                 badge = {
                                     if (index > 0) {
-                                        Badge { Text(text = index.toString()) }
+                                        Badge(modifier = Modifier.offset(y = 2.dp)) {
+                                            Text(text = index.toString())
+                                        }
                                     }
                                 },
                             ) {
-                                Text(text = title)
+                                Icon(
+                                    imageVector = when (index) {
+                                        0 -> Icons.Default.Phone
+                                        1 -> Icons.Default.Email
+                                        else -> Icons.Default.Person
+                                    }, contentDescription = null
+                                )
                             }
+                        },
+                        text = {
+//                            BadgedBox(
+//                                badge = {
+//                                    if (index > 0) {
+//                                        Badge { Text(text = index.toString()) }
+//                                    }
+//                                },
+//                            ) {
+                            Text(text = title)
+//                            }
                         },
                     )
                 }
