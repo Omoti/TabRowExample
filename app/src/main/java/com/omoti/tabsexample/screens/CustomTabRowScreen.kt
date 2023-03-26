@@ -125,7 +125,7 @@ fun CustomIndicator(tabPosition: TabPosition) {
             .tabIndicatorOffset(tabPosition)
             .height(3.dp)
             .padding(horizontal = 32.dp)
-            .clip(RoundedCornerShape(3.dp, 3.dp, 0.dp, 0.dp))
+            .clip(RoundedCornerShape(100, 100, 0, 0))
             .background(color = Color.Blue),
     )
 }
