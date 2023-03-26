@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults.contentColor
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -67,7 +68,12 @@ fun CustomTabRowScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
         ) {
             TabRow(
                 selectedTabIndex = selectedTabIndex,
-                indicator = { tabPositions -> CustomIndicator(tabPositions[selectedTabIndex]) },
+                indicator = { tabPositions ->
+                    CustomIndicator(
+                        tabPositions[selectedTabIndex],
+                        contentColor,
+                    )
+                },
             ) {
                 titles.forEachIndexed { index, title ->
                     Tab(
@@ -119,14 +125,14 @@ fun CustomTabRowScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
 }
 
 @Composable
-fun CustomIndicator(tabPosition: TabPosition) {
+fun CustomIndicator(tabPosition: TabPosition, color: Color) {
     Box(
         modifier = Modifier
             .tabIndicatorOffset(tabPosition)
             .height(3.dp)
             .padding(horizontal = 32.dp)
             .clip(RoundedCornerShape(100, 100, 0, 0))
-            .background(color = Color.Blue),
+            .background(color = color),
     )
 }
 
