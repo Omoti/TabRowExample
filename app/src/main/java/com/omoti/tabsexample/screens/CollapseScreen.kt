@@ -37,7 +37,7 @@ fun CollapseScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
     val titles = listOf("Tab 1", "Tab 2", "Tab 3")
 
     val topAppBarState = rememberTopAppBarState()
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(topAppBarState)
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(topAppBarState)
 
     Scaffold(
         topBar = {
