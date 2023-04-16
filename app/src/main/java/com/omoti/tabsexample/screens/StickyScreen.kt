@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
@@ -29,13 +31,23 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import com.omoti.tabsexample.ui.theme.TabsExampleTheme
+import kotlinx.coroutines.launch
+
+private const val TOP_CONTENT_HEIGHT = 200
 
 /**
  * FixedTabRow in Sticky Header
@@ -43,70 +55,125 @@ import com.omoti.tabsexample.ui.theme.TabsExampleTheme
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun StickyScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
-    var selectedTabIndex by remember { mutableStateOf(initialTabIndex) }
-    val titles = listOf("Tab 1", "Tab 2", "Tab 3")
-    val lazyListState = rememberLazyListState()
-    val showIcons by remember { derivedStateOf { lazyListState.firstVisibleItemIndex == 0 } }
+    val density = LocalDensity.current
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = "Sticky TabRow") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
-                    }
-                },
-            )
-        },
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-        ) {
-            LazyColumn(
-                state = lazyListState,
-                modifier = Modifier.fillMaxSize(),
+    val pagerState = rememberPagerState(initialPage = initialTabIndex)
+    val coroutineScope = rememberCoroutineScope()
+    val titles = listOf("Tab 1", "Tab 2", "Tab 3")
+    val lazyListStates = titles.map { rememberLazyListState() }
+    var topContentHeight by remember { mutableStateOf(TOP_CONTENT_HEIGHT.dp) }
+    val showIcons by remember { derivedStateOf { topContentHeight > 0.dp } }
+
+    // 全体のスクロール
+    val nestedScrollConnection = object : NestedScrollConnection {
+        override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+            // itemsの先頭が見えたらスクロール
+            if (available.y > 0) {
+                if (lazyListStates[pagerState.currentPage].firstVisibleItemIndex > 0 || lazyListStates[pagerState.currentPage].firstVisibleItemScrollOffset > 0) {
+                    return Offset.Zero
+                }
+            }
+
+            // スクロール量と同じだけTopContentの高さを変える
+            topContentHeight = with(density) {
+                (topContentHeight + available.y.toDp()).coerceIn(
+                    0.dp,
+                    TOP_CONTENT_HEIGHT.dp,
+                )
+            }
+
+            return Offset.Zero
+        }
+    }
+
+    // itemsのスクロール
+    val itemsScrollConnection = object : NestedScrollConnection {
+        override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+            // TopContentが残っている間はスクロールさせない
+            if (available.y < 0 && topContentHeight > 0.dp) {
+                return available // すべて消費
+            }
+
+            return super.onPreScroll(available, source)
+        }
+    }
+
+    Column {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = "Sticky TabRow") },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = null)
+                        }
+                    },
+                )
+            },
+            modifier = Modifier.nestedScroll(nestedScrollConnection),
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
             ) {
-                item {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .height(200.dp)
-                            .fillMaxWidth()
-                            .background(color = Color.LightGray),
-                    ) {
-                        Text(text = "Top Content")
+                TopContent(modifier = Modifier.height(topContentHeight))
+                TabRow(selectedTabIndex = pagerState.currentPage) {
+                    titles.forEachIndexed { index, title ->
+                        Tab(
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(index)
+                                }
+                            },
+                            icon = if (showIcons) {
+                                {
+                                    Icon(
+                                        imageVector = when (index) {
+                                            0 -> Icons.Default.Phone
+                                            1 -> Icons.Default.Email
+                                            else -> Icons.Default.Person
+                                        }, contentDescription = null
+                                    )
+                                }
+                            } else null,
+                            text = { Text(text = title, maxLines = 1) },
+                        )
                     }
                 }
-                stickyHeader {
-                    TabRow(selectedTabIndex = selectedTabIndex) {
-                        titles.forEachIndexed { index, title ->
-                            Tab(
-                                selected = selectedTabIndex == index,
-                                onClick = { selectedTabIndex = index },
-                                icon = if (showIcons) {
-                                    {
-                                        Icon(
-                                            imageVector = when (index) {
-                                                0 -> Icons.Default.Phone
-                                                1 -> Icons.Default.Email
-                                                else -> Icons.Default.Person
-                                            }, contentDescription = null
-                                        )
-                                    }
-                                } else null,
-                                text = { Text(text = title, maxLines = 1) },
-                            )
+                HorizontalPager(pageCount = titles.size, state = pagerState) { page ->
+                    LazyColumn(
+                        state = lazyListStates[page],
+                        modifier = Modifier.nestedScroll(itemsScrollConnection),
+                    ) {
+                        items(30) { index ->
+                            ListItem(headlineText = { Text(text = "item $index") })
                         }
                     }
                 }
-                items(30) { index ->
-                    ListItem(headlineText = { Text(text = "item $index") })
-                }
             }
         }
+    }
+}
+
+@Composable
+private fun TopContent(modifier: Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(color = Color.LightGray),
+    ) {
+        Text(text = "Top Content")
+    }
+}
+
+@Preview
+@Composable
+fun TopContentPreview() {
+    TabsExampleTheme {
+        TopContent(modifier = Modifier.height(TOP_CONTENT_HEIGHT.dp))
     }
 }
 
