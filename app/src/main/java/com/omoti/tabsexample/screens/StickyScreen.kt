@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -42,7 +43,9 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import com.omoti.tabsexample.ui.theme.TabsExampleTheme
@@ -118,7 +121,7 @@ fun StickyScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                TopContent(modifier = Modifier.height(topContentHeight))
+                TopContent(height = topContentHeight)
                 TabRow(selectedTabIndex = pagerState.currentPage) {
                     titles.forEachIndexed { index, title ->
                         Tab(
@@ -155,14 +158,24 @@ fun StickyScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
 }
 
 @Composable
-private fun TopContent(modifier: Modifier) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .fillMaxWidth()
-            .background(color = Color.LightGray),
+private fun TopContent(height: Dp) {
+    Column(
+        modifier = Modifier.height(height),
     ) {
-        Text(text = "Top Content")
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(TOP_CONTENT_HEIGHT.dp)
+                .background(color = Color.LightGray)
+                .offset(y = (height - TOP_CONTENT_HEIGHT.dp) / 2),
+        ) {
+            Text(
+                text = "Top Content",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }
 
@@ -182,7 +195,7 @@ private fun ChildContent(state: LazyListState, modifier: Modifier = Modifier) {
 @Composable
 fun TopContentPreview() {
     TabsExampleTheme {
-        TopContent(modifier = Modifier.height(TOP_CONTENT_HEIGHT.dp))
+        TopContent(TOP_CONTENT_HEIGHT.dp)
     }
 }
 
