@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -143,14 +144,10 @@ fun StickyScreen(onBack: () -> Unit, initialTabIndex: Int = 0) {
                     }
                 }
                 HorizontalPager(pageCount = titles.size, state = pagerState) { page ->
-                    LazyColumn(
+                    ChildContent(
                         state = lazyListStates[page],
                         modifier = Modifier.nestedScroll(itemsScrollConnection),
-                    ) {
-                        items(30) { index ->
-                            ListItem(headlineText = { Text(text = "item $index") })
-                        }
-                    }
+                    )
                 }
             }
         }
@@ -166,6 +163,18 @@ private fun TopContent(modifier: Modifier) {
             .background(color = Color.LightGray),
     ) {
         Text(text = "Top Content")
+    }
+}
+
+@Composable
+private fun ChildContent(state: LazyListState, modifier: Modifier = Modifier) {
+    LazyColumn(
+        state = state,
+        modifier = modifier,
+    ) {
+        items(30) { index ->
+            ListItem(headlineText = { Text(text = "item $index") })
+        }
     }
 }
 
